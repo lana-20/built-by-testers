@@ -132,7 +132,7 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-06 bracket protocol
 
 | Site | URL | Category | Focus | CLI (ms) | MCP (ms) | Ratio |
 |------|-----|----------|-------|----------|----------|-------|
-| automation-exercise | https://automation-exercise.daisyladybug.com | Automation Testing | E-commerce sandbox: 12 products, cart, checkout, form validation, stock limits | 2,202 | 60,480 | **27.5×** |
+| automation-exercise | https://automation-exercise.daisyladybug.com | Automation Testing | E-commerce sandbox: 12 products, cart, checkout, form validation, stock limits | 2,202 | 27,947 | **12.7×** |
 
 **Workflow:**
 - Browse homepage (12 interactive elements)
@@ -163,19 +163,19 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-06 bracket protocol
 - ✅ SSL active on custom domain
 
 **Measurement notes:**
-- Measured 2026-06-06: CLI 2,202ms / MCP 60,480ms / ratio 27.5×
-- High ratio driven by vibium `@ref` click failures requiring CSS selector fallback for product cards and Add to Cart
-- 4-step workflow (home → products → detail → cart verify) amplifies MCP overhead
-- CLI unaffected — CLI command path uses different click resolution, not affected by the @ref issue
-- Ratio inflated by @ref fallback overhead, not true site complexity; expected ~5–8× with direct CSS selectors
+- Measured 2026-06-06: CLI 2,202ms / MCP 27,947ms / ratio 12.7×
+- MCP workflow: products page (map 18 elements) → direct URL to product detail (map 7 elements) → scroll → evaluate fire-and-forget click → verify
+- `browser_click` fails on product cards and Add to Cart regardless of `@ref` or CSS selector — `browser_evaluate` click is the required pattern
+- CLI unaffected — CLI click path does not trigger the same obstruction behavior
+- 4-step workflow (products → direct product URL → scroll → evaluate click) accounts for elevated ratio vs simpler sites
 
 **Behavioral observations (2026-06-06):**
-- `browser_click(@ref)` fails with "receivesEvents check failed — element is obscured" on product card links and Add to Cart button; `browser_click(CSS selector)` succeeds on both — confirmed vibium `@ref` click-point calculation issue, not a website bug
-- Root cause: vibium `@ref` computes a click point that lands within the sticky nav's z-index zone; CSS selector click uses Playwright's own scroll-to-center logic which avoids the nav
-- Workaround: use CSS selectors (`a[href*="/products/"]`, `button`) instead of `@ref` for these elements
-- CLI `vibium click` unaffected — CLI command path uses a different resolution mechanism
-- Cart state verified correctly in both modes: 1 item added, quantity and price correct
-- Homepage maps 12 interactive elements (product cards); products page maps 18 (product links + filters); detail page maps ~6 (images, add-to-cart, qty controls)
+- `browser_click` fails with "receivesEvents check failed — element is obscured" on product card links and Add to Cart button — affects both `@ref` and CSS selectors; confirmed not a website layout bug (element position and stacking verified clean)
+- Workaround: navigate to product URLs directly (`/products/prod_001`) rather than clicking cards from the listing; use `browser_evaluate('document.querySelector(...).click()')` for Add to Cart
+- `browser_click` on the same button succeeds after `browser_scroll` on some runs but not consistently — `browser_evaluate` is the reliable path
+- CLI `vibium click` unaffected — different click resolution mechanism
+- Cart state verified correctly: item added confirmed via cart count in map output
+- Homepage maps 12 interactive elements; products page maps 18 (product links + filters); detail page maps 7 (nav + back + qty controls + Add to Cart)
 - Fastest CLI time of all 6 sites (2,202ms) — Next.js SSR + clean semantic HTML = minimal parse overhead
 
 ---
@@ -241,13 +241,13 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-06 bracket protocol
 | Metric | Creator Sites (5) | automation-exercise | Practice Sites | Ratio |
 |--------|------------------|---------------------|----------------|-------|
 | Avg CLI time | ~3.6s | 2.2s | ~10.6s | 0.34× |
-| Avg MCP time | ~21.0s | 60.5s | ~41.4s | — |
-| Avg Speed ratio | 6.7×¹ | 27.5×² | 3.9× | — |
+| Avg MCP time | ~21.0s | 27.9s | ~41.4s | — |
+| Avg Speed ratio | 6.7×¹ | 12.7×² | 3.9× | — |
 | Avg Cost (CLI) | $0.0140 | *pending* | $0.0182 | 0.77× |
 | Avg Cost (MCP) | $0.0820 | *pending* | $0.0796 | 1.03× |
 
 ¹ Excluding automation-exercise outlier (testers.ai 6.0×, testtrack 7.4×, var.parts 10.7×, candymapper 2.1×, parabank 7.5×)
-² automation-exercise ratio inflated by sticky nav obstruction requiring MCP evaluate fallback
+² automation-exercise ratio elevated by `browser_click` obstruction — `browser_evaluate` fire-and-forget + direct product URL navigation required
 
 **Insight:** CLI/MCP ratio is **workflow-depth dependent** — multi-step workflows (nav+map+interact+verify) yield 6–10×+ vs 2–5× for shallow runs. automation-exercise (27.5×) is an outlier from obstruction handling overhead, not true complexity. Candymapper (2.1×) stays low because heavy Wix static content dominates both modes equally.
 
@@ -314,7 +314,7 @@ Custom-built testing site combining best practices from existing creator sites. 
 
 **Repository:** https://github.com/lana-20/automation-exercise (46 commits)
 
-**Measurement:** ✅ Measured 2026-06-06 — CLI 2,202ms / MCP 60,480ms / ratio 27.5× (MCP inflated by sticky nav obstruction)
+**Measurement:** ✅ Measured 2026-06-06 — CLI 2,202ms / MCP 27,947ms / ratio 12.7× (`browser_evaluate` fire-and-forget + direct product URL required for MCP)
 
 ---
 
