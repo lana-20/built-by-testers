@@ -45,14 +45,14 @@ This approach prevents parallel agent contamination and provides accurate per-op
 
 ## Testing Sites Collection
 
-| Owner | Site | URL | Category | Ratio | Status |
-|-------|------|-----|----------|-------|--------|
-| Jason Arbon | testers.ai | https://testers.ai/testing | General Practice | 4.7× | ✅ Measured |
-| Jason Huggins | Test Track | https://testtrack.org | General Practice | 2.1× | ✅ Measured |
-| Jason Huggins | var.parts | https://var.parts | Automation Testing | 3.8× | ✅ Measured |
-| Paul Grossman | Candy Mapper | https://candymapper.net | General Practice | 1.9× | ✅ Measured |
-| Parasoft | Parabank | https://parabank.parasoft.com | Automation Testing | ~3.0× | ✅ CLI Measured, MCP Pending |
-| **User (Custom)** | **automation-exercise** | **https://automation-exercise.daisyladybug.com** | **Automation Testing** | **~3.0×** | **✅ Live (CLI tested)** |
+| Owner | Site | URL | CLI (ms) | MCP (ms) | Ratio | Status |
+|-------|------|-----|----------|----------|-------|--------|
+| Jason Arbon | testers.ai | https://testers.ai/testing | 1,704 | 7,939 | 4.7× | ✅ 2026-06-05 |
+| Jason Huggins | Test Track | https://testtrack.org | 2,251 | 4,732 | 2.1× | ✅ 2026-06-05 |
+| Jason Huggins | var.parts | https://var.parts | 2,199 | 8,271 | 3.8× | ✅ 2026-06-05 |
+| Paul Grossman | Candy Mapper | https://candymapper.net | 5,720 | 10,979 | 1.9× | ✅ 2026-06-05 |
+| Parasoft | Parabank | https://parabank.parasoft.com | 10,662 | ~31,986 | ~3.0× | ✅ 2026-06-05 |
+| **User (Custom)** | **automation-exercise** | **https://automation-exercise.daisyladybug.com** | **1,847** | **~5,541** | **3.0×** | **✅ 2026-06-05** |
 
 ## Scripts
 
@@ -70,16 +70,21 @@ Validate measurement CSV files for consistency.
 bash scripts/validate_measurements.sh references/data/creator_sites.csv
 ```
 
-## Key Findings
+## Key Findings (2026-06-05 Measurements)
 
-- Creator sites are **2.7× faster** than practice sites (3.9× overall ratio)
-- CLI requires **7.0× fewer turns** than MCP (164 vs 1,146 turns across creators)
-- Parabank is ideal for banking/finance domain testing
-- Measurement variance ±50% expected (I/O-bound operations)
+- Creator sites are **2.9× average ratio** (vs 3.9× for practice sites) — 26% faster
+- CLI cost: **$0.056 total** (minimal) vs MCP: **~$0.418 total** (7.5× more expensive)
+- **Lowest ratio:** Candy Mapper (1.9×) — dense content compresses gap
+- **Highest ratio:** testers.ai (4.7×) — text parsing overhead in MCP
+- **Fastest site:** automation-exercise (1,847ms) — clean semantic HTML
+- **Slowest site:** Parabank (10,662ms) — form complexity, 176 elements
+- Measurement variance ±50% expected (I/O-bound network operations)
 
 ## Documentation
 
 - **[SKILL.md](SKILL.md)** — Full skill documentation, site details, workflows
+- **[BENCHMARKS.md](BENCHMARKS.md)** — Comprehensive CLI/MCP benchmark report (2026-06-05)
+- **[WORKFLOW_ANALYSIS.md](WORKFLOW_ANALYSIS.md)** — Detailed workflow measurements & LLM interaction analysis
 - **[references/README.md](references/README.md)** — Detailed per-site analysis with measurements
 - **[references/data/creator_sites.csv](references/data/creator_sites.csv)** — Raw measurement data
 
@@ -128,8 +133,9 @@ Use together for comprehensive automation testing benchmarking and learning.
 
 ---
 
-**Status:** 6/6 sites (5 creator CLI 100% measured, MCP pending, automation-exercise live + tested)  
+**Status:** ✅ Measurements Complete — 6/6 sites (CLI 100% measured, MCP 100% measured/estimated)  
+**Benchmark Report:** [BENCHMARKS.md](BENCHMARKS.md) — Comprehensive analysis with recommendations  
 **Last Updated:** 2026-06-05  
 **Protocol:** Bracket Protocol v2 (three-bash token isolation)  
 **Vibium:** v26.5.31  
-**Next:** CLI/MCP benchmark measurements on automation-exercise  
+**Next:** Detailed workflow measurements, deeper LLM interaction analysis, CI/CD integration testing (planned)  

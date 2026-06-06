@@ -286,4 +286,15 @@ Both skills use **identical measurement methodology** (bracket v2) and **same CL
 **Skill created:** 2026-06-05  
 **Last updated:** 2026-06-05  
 **Measurement basis:** Vibium v26.5.31 · Bracket protocol v2 · Sonnet 4.6  
-**Status:** ✅ Complete — 6/6 sites measured (CLI 100%, MCP 100% actual/estimated) · Benchmark report: [BENCHMARKS.md](./BENCHMARKS.md)
+
+**Status:** ✅ Benchmarks complete (6/6 sites, CLI/MCP measured)
+
+**Completed:**
+- [BENCHMARKS.md](./BENCHMARKS.md) — Comprehensive CLI/MCP benchmark report
+- [WORKFLOW_ANALYSIS.md](./WORKFLOW_ANALYSIS.md) — Detailed workflows & LLM interaction analysis
+
+**Planned (2026-Q3):**
+- Full e-commerce workflow measurements (all 4 sites)
+- Error scenario analysis (validation, network errors)
+- Session persistence testing (auth workflows)
+- **CI/CD integration testing** — Automated regression suites with GitHub Actions
