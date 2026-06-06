@@ -165,14 +165,15 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-06 bracket protocol
 **Measurement notes:**
 - Measured 2026-06-06: CLI 2,202ms / MCP 27,947ms / ratio 12.7×
 - MCP workflow: products page (map 18 elements) → direct URL to product detail (map 7 elements) → scroll → evaluate fire-and-forget click → verify
-- `browser_click` fails on product cards and Add to Cart regardless of `@ref` or CSS selector — `browser_evaluate` click is the required pattern
+- `browser_click` fails on product cards and Add to Cart regardless of `@ref` or CSS selector in sessions where MB10 is active — `browser_evaluate` click is the reliable pattern
 - CLI unaffected — CLI click path does not trigger the same obstruction behavior
 - 4-step workflow (products → direct product URL → scroll → evaluate click) accounts for elevated ratio vs simpler sites
 
 **Behavioral observations (2026-06-06):**
-- `browser_click` fails with "receivesEvents check failed — element is obscured" on product card links and Add to Cart button — affects both `@ref` and CSS selectors; confirmed not a website layout bug (element position and stacking verified clean)
+- `browser_click` fails with "receivesEvents check failed — element is obscured" on product card links and Add to Cart button — affects both `@ref` and CSS selectors; confirmed not a website layout bug (element position and stacking verified clean); tracked as MB10
+- **MB10 is intermittent** — does not reproduce on every browser session; hypothesized hydration-timing dependent (false positive fires during React hydration window); `browser_click` may succeed on fresh sessions
 - Workaround: navigate to product URLs directly (`/products/prod_001`) rather than clicking cards from the listing; use `browser_evaluate('document.querySelector(...).click()')` for Add to Cart
-- `browser_click` on the same button succeeds after `browser_scroll` on some runs but not consistently — `browser_evaluate` is the reliable path
+- `browser_evaluate` is the reliable path regardless of MB10 state — use it unconditionally in automated workflows
 - CLI `vibium click` unaffected — different click resolution mechanism
 - Cart state verified correctly: item added confirmed via cart count in map output
 - Homepage maps 12 interactive elements; products page maps 18 (product links + filters); detail page maps 7 (nav + back + qty controls + Add to Cart)
