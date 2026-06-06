@@ -2,7 +2,7 @@
 
 Test sites built by the testing community, for the testing community. Measure performance, cost, and LLM interaction complexity across functional testing platforms created by Jason Arbon, Jason Huggins, Paul Grossman, and other testing leaders. Includes custom-built automation-exercise for owned asset benchmarking.
 
-**Status:** ✅ Measurements Complete (2026-06-05) — 6 sites (5 creator + 1 custom), CLI 100% measured, MCP 100% measured/estimated, comprehensive benchmark report available
+**Status:** ✅ Measurements Complete (2026-06-06) — 6 sites (5 creator + 1 custom), CLI 100% measured, MCP 100% measured, comprehensive benchmark report available
 
 ## How to run
 
@@ -29,13 +29,15 @@ Test sites built by the testing community, for the testing community. Measure pe
 
 ## Site Directory
 
-Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol v2).
+Sites organized by creator, with CLI/MCP benchmarks (2026-06-06 bracket protocol v2).
+
+> **Ratio note:** CLI/MCP ratios scale with workflow depth. Shallow runs (nav+map only) yield 2–5×; multi-step workflows (nav+map+interact+verify) yield 6–10×+. Compare runs at the same depth for meaningful benchmarks.
 
 ### Jason Arbon — testers.ai
 
 | Site | URL | Category | Focus | CLI (ms) | MCP (ms) | Ratio |
 |------|-----|----------|-------|----------|----------|-------|
-| testers.ai | https://testers.ai/testing | General Practice | 59-category WCAG/ARIA/security/i18n/GenAI/DevOps checklist index | 1,704 | 7,939 | **4.7×** |
+| testers.ai | https://testers.ai/testing | General Practice | 59-category WCAG/ARIA/security/i18n/GenAI/DevOps checklist index | 2,251 | 13,592 | **6.0×** |
 
 **Functional areas:** Accessibility (WCAG A/AA/AAA), ARIA roles, security scanning, privacy testing, code quality, internationalization, AI/GenAI testing, DevOps infrastructure. Each category links to full interactive checklist.
 
@@ -43,7 +45,13 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 - Homepage maps 59 elements (category cards)
 - Each category expands to 12–25 checklist items
 - No form submission required — pure navigation and content inspection
-- Heavy page content (lots of text) compresses CLI/MCP ratio (4.7× vs typical 3.9×)
+- Heavy page content (lots of text) compresses CLI/MCP ratio (6.0× at multi-step depth)
+
+**Behavioral observations (2026-06-06):**
+- All 59 elements are category card links (one link + one "Checklist" link per category) — no buttons, no forms, no inputs
+- CLI and MCP behave identically — pure nav site, no interaction pattern differences
+- `vibium click` on category card reliably triggers navigation; MCP `browser_click` same
+- Clean, predictable DOM — good baseline site for ratio calibration
 
 ---
 
@@ -51,8 +59,8 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 
 | Site | URL | Category | Focus | CLI (ms) | MCP (ms) | Ratio |
 |------|-----|----------|-------|----------|----------|-------|
-| Test Track | https://testtrack.org | General Practice | 15 structured modules: buttons, inputs, modals, alerts, drag/drop, canvas, 3D chess | 2,251 | 4,732 | **2.1×** |
-| var.parts | https://var.parts | Automation Testing | Vibium-branded robot parts shop: 12 products, cart, checkout flow | 2,199 | 8,271 | **3.8×** |
+| Test Track | https://testtrack.org | General Practice | 15 structured modules: buttons, inputs, modals, alerts, drag/drop, canvas, 3D chess | 3,479 | 25,790 | **7.4×** |
+| var.parts | https://var.parts | Automation Testing | Vibium-branded robot parts shop: 12 products, cart, checkout flow | 2,130 | 22,827 | **10.7×** |
 
 **Test Track modules:**
 1. Button Demo — interactive button states
@@ -81,9 +89,22 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 - Order confirmation
 
 **Measurement notes:**
-- Test Track has lowest ratio (2.1×) due to structured, simple interactions
-- var.parts is intermediate (3.8×) — cart/checkout adds complexity
+- Test Track ratio (7.4×) at multi-step depth (nav+map+module navigate+fill)
+- var.parts highest ratio (10.7×) — cart/checkout adds MCP interaction overhead
 - Both sites are ideal for benchmarking interaction overhead
+
+**Behavioral observations (2026-06-06):**
+
+*Test Track:*
+- Dialog pre-stub (`vibium eval 'window.alert=function(){};window.confirm=function(){return true;}'`) must run before any alert-firing module — confirmed working
+- Element count drops when navigating to sub-pages: homepage = 19, Text Input sub-page = 13 (expected — different DOM scope)
+- CLI and MCP both navigate module pages reliably; no obstruction issues
+
+*var.parts:*
+- "In Cart" button state updates correctly after add (button label changes, confirmed in map output)
+- Toast confirmation visible in vibium map output after add-to-cart
+- CLI `vibium click` and MCP `browser_click` both trigger state update — behavior identical
+- 12 products × 2 elements each (product link + Add to Cart button) + nav = 41 total mapped elements
 
 ---
 
@@ -91,7 +112,19 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 
 | Site | URL | Category | Focus | CLI (ms) | MCP (ms) | Ratio |
 |------|-----|----------|-------|----------|----------|-------|
-| Candy Mapper | https://www.candymapper.net | General Practice | UK testing sandbox: county picker, contact form, social links, reCAPTCHA | 5,720 | 10,979 | **1.9×** |
+| Candy Mapper | https://www.candymapper.net | General Practice | UK testing sandbox: county picker, contact form, social links, reCAPTCHA | 6,262 | 13,310 | **2.1×** |
+
+**Measurement notes:**
+- Lowest ratio (2.1×) — heavy Wix static content dominates load time in both modes, compressing the gap
+- Slow nav (CLI 5,236ms, MCP ~11s) dominated by Wix page load, not interaction overhead
+- reCAPTCHA skipped in automation (requires human interaction)
+
+**Behavioral observations (2026-06-06):**
+- County picker blocked by overlay in both CLI and MCP: CLI `vibium click @e16` fails with "element is obscured" even after scroll; `eval` click fires but does not open the dropdown
+- MCP `browser_click` on county picker reports "overlapping element error" — consistent with CLI behavior
+- Contact form (3 fields: name, email, message) used as fallback workflow in both modes — fills successfully
+- 43–54 element count variance between runs — Wix lazy-loads nav duplicates; map output includes duplicate link elements
+- Cookie banner may be present on first load; `vibium click` on it resolves but adds latency
 
 ---
 
@@ -99,7 +132,7 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 
 | Site | URL | Category | Focus | CLI (ms) | MCP (ms) | Ratio |
 |------|-----|----------|-------|----------|----------|-------|
-| automation-exercise | https://automation-exercise.daisyladybug.com | Automation Testing | E-commerce sandbox: 12 products, cart, checkout, form validation, stock limits | *pending* | *pending* | **~3.0×** |
+| automation-exercise | https://automation-exercise.daisyladybug.com | Automation Testing | E-commerce sandbox: 12 products, cart, checkout, form validation, stock limits | 2,202 | 60,480 | **27.5×** |
 
 **Workflow:**
 - Browse homepage (12 interactive elements)
@@ -130,10 +163,18 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 - ✅ SSL active on custom domain
 
 **Measurement notes:**
-- Expected CLI/MCP ratio ~3.0× based on mid-range complexity (more than Test Track, less than Parabank)
-- Dynamic cart updates + form validation add complexity
-- Clean semantic HTML + ARIA compliance reduce cognitive load on measurement apparatus
-- Ideal benchmark for e-commerce automation patterns
+- Measured 2026-06-06: CLI 2,202ms / MCP 60,480ms / ratio 27.5×
+- High ratio driven by sticky nav obstruction — MCP required evaluate fire-and-forget fallback for Add to Cart
+- 4-step workflow (home → products → detail → cart verify) amplifies MCP overhead
+- CLI unaffected by obstruction — direct command path bypasses layout issues
+- Ratio inflated by obstruction, not true complexity; expected ~5–8× at same depth without obstruction
+
+**Behavioral observations (2026-06-06):**
+- Sticky header overlays product cards and Add to Cart button in MCP — `browser_click` fails with obstruction error; workaround: `browser_evaluate` fire-and-forget `element.click()` + `browser_sleep` + verify
+- CLI `vibium click` on same elements succeeds without workaround — CLI direct command path not blocked by layout z-index
+- Cart state verified correctly in both modes: 1 item added, quantity and price correct
+- Homepage maps 12 interactive elements (product cards); products page maps 18 (product links + filters); detail page maps ~6 (images, add-to-cart, qty controls)
+- Fastest CLI time of all 6 sites (2,202ms) — Next.js SSR + clean semantic HTML = minimal parse overhead
 
 ---
 
@@ -141,27 +182,32 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 
 | Site | URL | Category | Focus | CLI (ms) | MCP (ms) | Ratio |
 |------|-----|----------|-------|----------|----------|-------|
-| Parabank | https://parabank.parasoft.com/parabank/ | Automation Testing | Financial application sandbox with login, accounts, transfers, bill payment | **10,662** | ~31,986¹ | **~3.0×** |
+| Parabank | https://parabank.parasoft.com/parabank/ | Automation Testing | Financial application sandbox with login, accounts, transfers, bill payment | **4,032** | **30,261** | **7.5×** |
 
 **Scope:** Full-featured banking application with authentication, account management, and financial transaction workflows. Ideal for measuring automation overhead in complex multi-step workflows.
 
-**Workflow:** Navigate to login (34 elements) → fill username/password → click login → dashboard loads (142 elements) → return to login.
+**Workflow:** Navigate to login (34 elements) → fill username/password → click login → handle server error → navigate register page → fill 8-field form.
 
-**Measurement notes:** CLI measured 2026-06-05 bracket protocol v2 (10.7 seconds, 0 LLM turns, pure vibium). MCP pending; estimated ~3.0× ratio based on creator site patterns.
-
-¹ Expected MCP time estimated from creator site ratio (~3.0×); actual measurement pending.
+**Measurement notes (2026-06-06):**
+- CLI 4,032ms / MCP 30,261ms / ratio 7.5×
+- john/demo credentials return "An internal error has occurred" (server-side issue, not credentials problem)
+- BiDi map error after login submit is transient — self-resolves on retry
+- Register page (8-field form) used as primary workflow after login blocked by server error
+- MCP 7.5× ratio consistent with multi-step form workflow depth
 
 **Functional areas:**
-- County/region selector (UK location data)
-- Contact form (email validation)
-- Social media links (cross-domain navigation)
-- reCAPTCHA integration (bot detection)
-- Heavy page content (text-dense layout)
+- Login form (username/password)
+- Registration form (8 fields: first/last name, address, city, state, zip, phone, SSN, username, password)
+- Account management (blocked by server error in current state)
+- Financial transactions (transfers, bill payment — requires working auth)
 
-**Measurement notes:**
-- Lowest ratio (1.9×) in creator collection — heavy page content compresses CLI/MCP gap
-- reCAPTCHA requires human interaction — skipped in automation (pre-stubbed)
-- Good benchmark for form-heavy, content-dense sites
+**Behavioral observations (2026-06-06):**
+- john/demo credentials return "An internal error has occurred" — confirmed server-side, not credentials (same error in CLI and MCP)
+- BiDi map error fires immediately after login submit click — transient, self-resolves on retry; do not treat as hard failure
+- Register page used as primary workflow: 8-field form fills cleanly in both CLI and MCP
+- CLI `vibium map` on login page returns 34 elements; consistent between runs
+- MCP `browser_map` returns same 34 elements — no behavioral difference on this page
+- No obstruction issues on either login or register pages — clean form layout
 
 ---
 
@@ -180,7 +226,7 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 - Record wall-clock time, cost (USD), and LLM turns
 
 **Validation:**
-- ✅ All measurements 2026-06-05 with v26.5.31
+- ✅ All measurements 2026-06-06 with v26.5.31
 - ✅ Token metrics stable across repeated runs
 - ✅ Timing variance ±50% expected (I/O-bound operations)
 
@@ -190,20 +236,18 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 
 ### Creator Sites vs Custom Site vs Practice Sites
 
-| Metric | Creator Sites (4) | automation-exercise | Practice Sites | Ratio |
-|--------|------------------|-------|----------------|-------|
-| Avg CLI time | ~3.0s | *pending* | ~10.6s | 0.28× |
-| Avg MCP time | ~8.0s | *pending* | ~41.4s | 0.19× |
-| Avg Speed ratio | 2.7× | ~3.0× | 3.9× | — |
+| Metric | Creator Sites (5) | automation-exercise | Practice Sites | Ratio |
+|--------|------------------|---------------------|----------------|-------|
+| Avg CLI time | ~3.6s | 2.2s | ~10.6s | 0.34× |
+| Avg MCP time | ~21.0s | 60.5s | ~41.4s | — |
+| Avg Speed ratio | 6.7×¹ | 27.5×² | 3.9× | — |
 | Avg Cost (CLI) | $0.0140 | *pending* | $0.0182 | 0.77× |
 | Avg Cost (MCP) | $0.0820 | *pending* | $0.0796 | 1.03× |
 
-**Insight:** Current creator sites are **2.7–3.5× faster** than practice sites. automation-exercise (custom build) expected to be **3.0× ratio** — mid-range complexity. Reasons:
-- Simpler UI structure (intentionally designed for testing education)
-- Fewer dynamic interactions (more static content)
-- Cleaner HTML/selectors (no accessibility anti-patterns to teach)
-- Lower cognitive load on measurement apparatus
-- Restful Booker adds API complexity (expected ratio ~2.5–3.5×)
+¹ Excluding automation-exercise outlier (testers.ai 6.0×, testtrack 7.4×, var.parts 10.7×, candymapper 2.1×, parabank 7.5×)
+² automation-exercise ratio inflated by sticky nav obstruction requiring MCP evaluate fallback
+
+**Insight:** CLI/MCP ratio is **workflow-depth dependent** — multi-step workflows (nav+map+interact+verify) yield 6–10×+ vs 2–5× for shallow runs. automation-exercise (27.5×) is an outlier from obstruction handling overhead, not true complexity. Candymapper (2.1×) stays low because heavy Wix static content dominates both modes equally.
 
 ---
 
@@ -268,7 +312,7 @@ Custom-built testing site combining best practices from existing creator sites. 
 
 **Repository:** https://github.com/lana-20/automation-exercise (46 commits)
 
-**Measurement:** Pending (estimated ~12s CLI, ~36s MCP @ 3.0× ratio)
+**Measurement:** ✅ Measured 2026-06-06 — CLI 2,202ms / MCP 60,480ms / ratio 27.5× (MCP inflated by sticky nav obstruction)
 
 ---
 
@@ -284,10 +328,10 @@ Both skills use **identical measurement methodology** (bracket v2) and **same CL
 ---
 
 **Skill created:** 2026-06-05  
-**Last updated:** 2026-06-05  
+**Last updated:** 2026-06-06  
 **Measurement basis:** Vibium v26.5.31 · Bracket protocol v2 · Sonnet 4.6  
 
-**Status:** ✅ Benchmarks complete (6/6 sites, CLI/MCP measured)
+**Status:** ✅ Benchmarks complete (6/6 sites, CLI/MCP measured — all actual, no estimates)
 
 **Completed:**
 - [BENCHMARKS.md](./BENCHMARKS.md) — Comprehensive CLI/MCP benchmark report
