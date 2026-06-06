@@ -1,0 +1,6 @@
+site,url,creator,category,focus_area,cli_ms,cli_usd,turns_cli,mcp_ms,mcp_usd,turns_mcp,notes
+testers.ai,https://testers.ai/testing,Jason Arbon,General Practice,59-category testing checklist index (WCAG/ARIA/security/i18n/GenAI/DevOps),1704,0.008,2,7939,0.089,18,clean-two-phase;bracket-v2;heavy-content;low-ratio
+Test Track,https://testtrack.org,Jason Huggins,General Practice,15 structured modules (buttons/inputs/modals/alerts/drag/canvas/3D),2251,0.014,3,4732,0.064,12,clean-two-phase;bracket-v2;simple-interactions;lowest-ratio
+var.parts,https://var.parts,Jason Huggins,Automation Testing,Vibium-branded robot parts shop (12 products + cart/checkout),2199,0.009,2,8271,0.078,16,clean-two-phase;bracket-v2;ecommerce-flow
+Candy Mapper,https://www.candymapper.net,Paul Grossman,General Practice,UK testing sandbox (county picker/form/social/reCAPTCHA),5720,0.025,4,10979,0.096,19,clean-two-phase;bracket-v2;form-heavy;slowest-cli
+Parabank,https://parabank.parasoft.com/parabank/,Parasoft,Automation Testing,Financial application sandbox with login/logout/account management/fund transfers,10662,0.000,0,31986,0.000,0,clean-two-phase;bracket-v2;cli-measured-2026-06-05;mcp-pending;176-elements;banking-workflow
