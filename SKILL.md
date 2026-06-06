@@ -164,14 +164,16 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-06 bracket protocol
 
 **Measurement notes:**
 - Measured 2026-06-06: CLI 2,202ms / MCP 60,480ms / ratio 27.5×
-- High ratio driven by sticky nav obstruction — MCP required evaluate fire-and-forget fallback for Add to Cart
+- High ratio driven by vibium `@ref` click failures requiring CSS selector fallback for product cards and Add to Cart
 - 4-step workflow (home → products → detail → cart verify) amplifies MCP overhead
-- CLI unaffected by obstruction — direct command path bypasses layout issues
-- Ratio inflated by obstruction, not true complexity; expected ~5–8× at same depth without obstruction
+- CLI unaffected — CLI command path uses different click resolution, not affected by the @ref issue
+- Ratio inflated by @ref fallback overhead, not true site complexity; expected ~5–8× with direct CSS selectors
 
 **Behavioral observations (2026-06-06):**
-- Sticky header overlays product cards and Add to Cart button in MCP — `browser_click` fails with obstruction error; workaround: `browser_evaluate` fire-and-forget `element.click()` + `browser_sleep` + verify
-- CLI `vibium click` on same elements succeeds without workaround — CLI direct command path not blocked by layout z-index
+- `browser_click(@ref)` fails with "receivesEvents check failed — element is obscured" on product card links and Add to Cart button; `browser_click(CSS selector)` succeeds on both — confirmed vibium `@ref` click-point calculation issue, not a website bug
+- Root cause: vibium `@ref` computes a click point that lands within the sticky nav's z-index zone; CSS selector click uses Playwright's own scroll-to-center logic which avoids the nav
+- Workaround: use CSS selectors (`a[href*="/products/"]`, `button`) instead of `@ref` for these elements
+- CLI `vibium click` unaffected — CLI command path uses a different resolution mechanism
 - Cart state verified correctly in both modes: 1 item added, quantity and price correct
 - Homepage maps 12 interactive elements (product cards); products page maps 18 (product links + filters); detail page maps ~6 (images, add-to-cart, qty controls)
 - Fastest CLI time of all 6 sites (2,202ms) — Next.js SSR + clean semantic HTML = minimal parse overhead
