@@ -197,17 +197,49 @@ Test new agents/frameworks against creator sites first:
 
 ---
 
+## Planned: automation-exercise.daisyladybug.com
+
+**E-commerce testing sandbox (in development)**
+
+Custom-built testing site combining best practices from existing creator sites. Owned and maintained for educational content strategy.
+
+**Specifications:**
+- **Domain:** https://automation-exercise.daisyladybug.com
+- **Category:** Automation Testing
+- **Focus:** E-commerce workflows with happy path + edge cases + negative scenarios
+- **Complexity:** Mid-range (~3.0× CLI/MCP ratio, ~12s CLI measurement target)
+- **Tech Stack:** TBD (Next.js or static HTML+JS)
+- **Design System:** Daisy Lady Bug design system (via `/dlb-page` skill)
+
+**Core Workflows:**
+1. **Happy Path:** Browse → search/filter → product detail → add to cart → checkout → order confirmation
+2. **Edge Cases:** Cart limits, stock validation, form boundaries, payment simulation
+3. **Negative Cases:** Invalid inputs, auth failures, network errors, validation messages
+
+**Build Plan:**
+- Phase 1: Design & specification (workflow diagrams, test scenarios)
+- Phase 2: Implementation (frontend UI + backend if needed)
+- Phase 3: Deploy to daisyladybug.com + measure (CLI + MCP)
+- Phase 4: Add to `/built-by-testers` collection
+
+**Status:** Planning (design phase pending)  
+**Owner:** User (educational content strategy)  
+**Measurement:** Pending (estimated ~12s CLI, ~36s MCP @ 3.0× ratio)
+
+---
+
 ## Integration with practice-testing
 
 Both skills use **identical measurement methodology** (bracket v2) and **same CLI/MCP interfaces**. Findings are comparable:
 
-- `practice-testing`: 100 sites across 5 QA practice categories
-- `built-by-testers`: 10+ sites by testing leaders
+- `practice-testing`: 100 sites across 5 QA practice categories (breadth)
+- `built-by-testers`: 5 creator sites + 1 custom site (depth + owned asset)
 
-**Use together:** Measure practice sites for breadth, creator sites for focused learning and baseline validation.
+**Use together:** Measure practice sites for breadth, creator sites for focused learning and baseline validation, owned site for complete control.
 
 ---
 
 **Skill created:** 2026-06-05  
+**Last updated:** 2026-06-05  
 **Measurement basis:** Vibium v26.5.31 · Bracket protocol v2 · Sonnet 4.6  
-**Status:** Ready for site documentation and benchmark runs
+**Status:** 4/5 creator sites measured (CLI 100%, MCP pending) · Custom site in planning
