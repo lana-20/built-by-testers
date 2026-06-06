@@ -191,26 +191,26 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-06 bracket protocol
 
 **Workflow:** Navigate to login (34 elements) → fill username/password → click login → handle server error → navigate register page → fill 8-field form.
 
-**Measurement notes (2026-06-06):**
-- CLI 4,032ms / MCP 30,261ms / ratio 7.5×
-- john/demo credentials return "An internal error has occurred" (server-side issue, not credentials problem)
-- BiDi map error after login submit is transient — self-resolves on retry
-- Register page (8-field form) used as primary workflow after login blocked by server error
-- MCP 7.5× ratio consistent with multi-step form workflow depth
+**Measurement notes (2026-06-06 run 1 / run 2):**
+- Run 1: CLI 4,032ms / MCP 30,261ms / ratio 7.5×
+- Run 2: CLI 2,446ms / MCP 25,540ms / ratio 10.4×
+- Timing variance within ±50% expected range
+- **john/demo login status is intermittent** — run 1 returned "An internal error has occurred"; run 2 login succeeded and returned full dashboard with 11 accounts
+- When login works: dashboard maps 37 elements including account numbers
+- When login fails: use register page (8-field form) as fallback workflow
 
 **Functional areas:**
 - Login form (username/password)
 - Registration form (8 fields: first/last name, address, city, state, zip, phone, SSN, username, password)
-- Account management (blocked by server error in current state)
+- Account management (login-dependent — intermittently available)
 - Financial transactions (transfers, bill payment — requires working auth)
 
 **Behavioral observations (2026-06-06):**
-- john/demo credentials return "An internal error has occurred" — confirmed server-side, not credentials (same error in CLI and MCP)
-- BiDi map error fires immediately after login submit click — transient, self-resolves on retry; do not treat as hard failure
-- Register page used as primary workflow: 8-field form fills cleanly in both CLI and MCP
-- CLI `vibium map` on login page returns 34 elements; consistent between runs
-- MCP `browser_map` returns same 34 elements — no behavioral difference on this page
-- No obstruction issues on either login or register pages — clean form layout
+- john/demo login is **intermittent** — server-side; not a credentials issue (same in CLI and MCP); retry if it fails
+- When login succeeds: dashboard shows 11 accounts (@e17–@e27 account number links), 37 total elements
+- BiDi map error may fire immediately after login submit click — transient, self-resolves on retry; do not treat as hard failure
+- Login page maps 34 elements consistently in both CLI and MCP
+- No obstruction issues on login or register pages — clean form layout
 
 ---
 

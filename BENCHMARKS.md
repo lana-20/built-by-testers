@@ -1,341 +1,124 @@
-# Built by Testers — Benchmark Measurements (2026-06-05)
+# Built by Testers — Benchmark Measurements
 
 Comprehensive CLI/MCP performance measurements across 6 automation testing sites using bracket protocol v2.
+All measurements on Vibium v26.5.31. Timing variance ±50% expected (I/O-bound operations).
 
 ---
 
-## Executive Summary
+## Summary Table
 
-| Metric | Value | Insight |
-|--------|-------|---------|
-| **Total Sites** | 6 (5 creators + 1 custom) | Complete coverage |
-| **CLI Cost** | $0.056 | Minimal token consumption |
-| **MCP Cost** | ~$0.418 | 7.5× more expensive than CLI |
-| **Avg CLI Time** | 4,064ms | Fast baseline |
-| **Avg MCP Time** | ~11,575ms | 2.9× slower |
-| **Fastest Site** | automation-exercise (1,847ms) | Clean HTML/React |
-| **Slowest Site** | Parabank (10,662ms) | Form-heavy complexity |
-| **Highest Ratio** | testers.ai (4.7×) | Dense text content |
-| **Lowest Ratio** | Test Track (2.1×) | Simple interactions |
+### Run 1 — 2026-06-06 (multi-step workflows)
 
----
+| Site | CLI (ms) | MCP (ms) | Ratio |
+|------|----------|----------|-------|
+| testers.ai | 2,251 | 13,592 | **6.0×** |
+| testtrack.org | 3,479 | 25,790 | **7.4×** |
+| var.parts | 2,130 | 22,827 | **10.7×** |
+| candymapper.net | 6,262 | 13,310 | **2.1×** |
+| parabank | 4,032 | 30,261 | **7.5×** |
+| automation-exercise | 2,202 | 27,947 | **12.7×** |
+| **Total** | **20,356** | **133,727** | **avg 7.7×** |
 
-## Detailed Results by Site
-
-### 1. testers.ai (Jason Arbon)
-
-**Metrics:**
-- CLI: 1,704ms | $0.008 | 2 turns
-- MCP: 7,939ms | $0.089 | 18 turns
-- **Ratio: 4.7×** (highest)
-- Elements: 117 (homepage)
-
-**Characteristics:**
-- Text-dense category index (59 testing domains)
-- Heavy description text per category
-- Clean semantic navigation structure
-- No framework overhead
-
-**Why 4.7× Ratio:**
-- MCP struggles with parsing dense text descriptions
-- 117 elements require more tool invocations
-- Content parsing dominates MCP time
-
-**Workflow:**
-1. Navigate to homepage
-2. Map 117 category elements
-3. Read text content for each category
-4. Click category to expand checklist
-5. Return to homepage
+**Workflow depth:** nav+map+interact+verify (multi-step).
+**Parabank note (run 1):** john/demo returned "An internal error has occurred" — register page used as fallback.
 
 ---
 
-### 2. Test Track (Jason Huggins)
+### Run 2 — 2026-06-06 (second pass, same day)
 
-**Metrics:**
-- CLI: 2,251ms | $0.014 | 3 turns
-- MCP: 4,732ms | $0.064 | 12 turns
-- **Ratio: 2.1×** (lowest)
-- Elements: 18 (homepage)
+| Site | CLI (ms) | MCP (ms) | Ratio |
+|------|----------|----------|-------|
+| testers.ai | 960 | 19,663 | **20.5×** |
+| testtrack.org | 1,339 | 26,554 | **19.8×** |
+| var.parts | 2,445 | 20,318 | **8.3×** |
+| candymapper.net | 5,187 | 19,945 | **3.8×** |
+| parabank | 2,446 | 25,540 | **10.4×** |
+| automation-exercise | 1,583 | 38,807 | **24.5×** |
+| **Total** | **13,960** | **150,827** | **avg 11.1×** |
 
-**Characteristics:**
-- Clean, simple HTML structure
-- 15 structured modules (buttons → 3D chess)
-- Minimal framework state
-- Fast element discovery
-
-**Why 2.1× Ratio:**
-- Simple DOM structure → fast parsing
-- Low element count (18 elements)
-- Direct interaction pattern (click module → execute test)
-
-**Workflow:**
-1. Navigate to homepage
-2. Map 18 module links
-3. Click module
-4. Execute module interactions
-5. Return to homepage
+**CLI faster in run 2:** warm daemon cache, not meaningful improvement. Ratios higher because CLI denominator is smaller.
+**Parabank note (run 2):** john/demo login succeeded — dashboard with 11 accounts returned (37 elements). Login is intermittent server-side.
 
 ---
 
-### 3. var.parts (Jason Huggins)
+## Behavioral Observations by Site
 
-**Metrics:**
-- CLI: 2,199ms | $0.009 | 2 turns
-- MCP: 8,271ms | $0.078 | 16 turns
-- **Ratio: 3.8×** (intermediate)
-- Elements: ~25 (homepage)
+### testers.ai (Jason Arbon)
 
-**Characteristics:**
-- E-commerce product grid (vibium-branded robot parts)
-- 12 products with add-to-cart buttons
-- Shopping cart functionality
-- Checkout form
+- 59 elements on homepage (category cards + Checklist links)
+- Category click navigates to testers.ai homepage (28 elements) — not a sub-category page
+- Pure nav site — no forms, no inputs on the testing index page
+- CLI and MCP behavior identical — no interaction pattern differences
+- Clean DOM, good ratio calibration site
 
-**Why 3.8× Ratio:**
-- E-commerce complexity (cart state, calculations)
-- Product card iteration (12 items × 2 elements each)
-- Form interaction overhead
+### testtrack.org (Jason Huggins)
 
-**Workflow:**
-1. Navigate to homepage
-2. Map product grid (~25 elements)
-3. Click product card
-4. Add to cart
-5. Navigate to cart
-6. Proceed to checkout
-7. Fill form (name, email, address)
-8. Submit order
+- 19 elements on homepage (18 module links + theme toggle)
+- Text Input Demo sub-page: 13 elements (6 inputs + textarea + 2 buttons + nav)
+- Element count drops from 19 → 13 on sub-page (expected — scoped DOM)
+- Dialog pre-stub required before alert-firing modules: `eval 'window.alert=function(){};window.confirm=function(){return true;}'`
+- CLI and MCP fill textareas identically (MB7 fixed in v26.5.31)
 
----
+### var.parts (Jason Huggins)
 
-### 4. Candy Mapper (Paul Grossman)
+- 41 elements on shop page (12 products × 2 elements each + 5 nav)
+- "Add to Cart" button becomes "In Cart" after click — state change confirmed in map
+- Toast notification visible in map output: `[li] "Added to cartVibium Battery Pack"`
+- browser_click on Add to Cart works reliably (no obstruction issues)
+- CLI and MCP behavior identical on cart state update
 
-**Metrics:**
-- CLI: 5,720ms | $0.025 | 4 turns
-- MCP: 10,979ms | $0.096 | 19 turns
-- **Ratio: 1.9×** (lowest overall)
-- Elements: ~51 (homepage)
+### candymapper.net (Paul Grossman)
 
-**Characteristics:**
-- UK testing sandbox (county picker, contact form)
-- Heavy page content (text + form fields)
-- Social media links
-- reCAPTCHA integration
+- 51–54 element count variance (Wix lazy-loads duplicate nav elements)
+- County picker (@e16 "Select a County") blocked by overlay in both CLI and MCP — use contact form as fallback
+- Contact form fields: @e28 (First name), @e30 (Email) — fill reliably in both modes
+- Slow nav dominated by Wix page load (~5s CLI, ~20s MCP) — not interaction overhead
+- reCAPTCHA present but skipped (human interaction required)
 
-**Why 1.9× Ratio:**
-- Heavy content compresses CLI/MCP gap
-- Both interfaces slow on dense content
-- Form field iteration (8+ input fields)
+### parabank (Parasoft)
 
-**Workflow:**
-1. Navigate to homepage
-2. Map elements (~51 total)
-3. Select county from dropdown
-4. Fill contact form (name, email, message)
-5. Pre-stub reCAPTCHA
-6. Submit form
-7. Verify confirmation message
+- Login page: 34 elements consistently
+- john/demo login: **intermittent** — server-side issue, not credentials. Retry if "An internal error" appears
+- When login succeeds: 37 elements on dashboard, 11 account number links (@e17–@e27)
+- BiDi map error may fire after login submit — transient, self-resolves on retry
+- Register page (8-field form) works as fallback when login blocked
+
+### automation-exercise (custom)
+
+- Products page: 18 elements (12 product links + 2 selects + 1 search + 3 nav)
+- Product detail: 7 elements (3 nav + back + qty − + qty + + Add to Cart)
+- Add to Cart confirms via cart count increment and button label "✓ Added to Cart"
+- MB10 (browser_click false obstruction) is intermittent — use `browser_evaluate` unconditionally
+- CLI `vibium eval` + `vibium map` to verify — same reliable pattern as MCP evaluate
 
 ---
 
-### 5. Parabank (Parasoft)
+## Ratio Interpretation
 
-**Metrics:**
-- CLI: 10,662ms | $0.000 | 0 turns
-- MCP: ~31,986ms | ~$0.025 | ~6 turns
-- **Ratio: ~3.0×** (estimated)
-- Elements: ~20 (login), ~142 (dashboard)
+CLI/MCP ratio is **workflow-depth dependent**:
 
-**Characteristics:**
-- Financial application (full banking features)
-- Login form + dashboard
-- Account management, transfers, bill payment
-- Highest element count (176 total)
+| Workflow depth | Expected ratio |
+|----------------|----------------|
+| nav+map only | 2–5× |
+| nav+map+click+map | 5–10× |
+| nav+map+fill+click+verify | 8–15× |
+| nav+map+interact+verify (multi-step) | 10–25× |
 
-**Why ~3.0× Ratio:**
-- Large element count (176 elements)
-- Multi-page workflow (login → dashboard → return)
-- Form complexity (username/password validation)
+High ratios (>15×) indicate MCP inter-turn overhead dominates. CLI executes all commands in a single shell call; MCP has one tool call per action with inter-turn Claude processing time between each.
 
-**Workflow:**
-1. Navigate to login page
-2. Map login form (34 elements)
-3. Fill username/password
-4. Click login
-5. Map dashboard (142 elements)
-6. Navigate back to login
-7. Verify session cleared
+**candymapper stays low** (2–4×) because Wix page load (~5s) dominates both modes equally — the CLI/MCP overhead is compressed by constant load time.
 
 ---
 
-### 6. automation-exercise (Custom Build)
-
-**Metrics:**
-- CLI: 1,847ms | $0.000 | 0 turns (load + map)
-- MCP: ~5,541ms | $0.042 | 4 turns (estimated)
-- **Ratio: 3.0×** (target achieved)
-- Elements: 12 (homepage)
-
-**Characteristics:**
-- E-commerce sandbox (12 products, cart, checkout)
-- Clean semantic HTML (Next.js)
-- React Context state management
-- WCAG 2.1 AA/AAA compliant
-
-**Why 3.0× Ratio:**
-- Mid-range complexity (similar to Parabank)
-- Simple HTML structure (similar to Test Track)
-- Dynamic cart state (similar to var.parts)
-
-**Workflow:**
-1. Navigate to homepage
-2. Map elements (12 interactive)
-3. Navigate to products
-4. Click product detail
-5. Add to cart
-6. Proceed to checkout
-7. Fill form (billing/payment)
-8. Submit order
-9. View confirmation
-
----
-
-## Comparative Analysis
-
-### By Speed Ratio
-
-**Slowest → Fastest CLI/MCP ratio:**
-
-| Site | Ratio | Why |
-|------|-------|-----|
-| testers.ai | 4.7× | Heavy text parsing (117 elements) |
-| var.parts | 3.8× | E-commerce complexity (cart calculations) |
-| Parabank | 3.0× | Large element count (176 elements) |
-| automation-exercise | 3.0× | Mid-range complexity (balanced) |
-| Test Track | 2.1× | Simple interactions (18 elements) |
-| Candy Mapper | 1.9× | Dense content (CLI also slow) |
-
-**Insight:** Text density and element count correlate with ratio. Cleaner HTML = tighter CLI/MCP gap.
-
-### By Cost (CLI)
-
-| Site | Cost | % of Total |
-|------|------|-----------|
-| Parabank | $0.000 | 0% |
-| automation-exercise | $0.000 | 0% |
-| var.parts | $0.009 | 16% |
-| testers.ai | $0.008 | 14% |
-| Test Track | $0.014 | 25% |
-| Candy Mapper | $0.025 | 45% |
-| **Total** | **$0.056** | **100%** |
-
-**Insight:** CLI costs are minimal. Most sites <$0.01 per run. Test Track and Candy Mapper consume more tokens due to form interactions.
-
-### By Cost (MCP)
-
-| Site | Cost | % of Total |
-|------|------|-----------|
-| testers.ai | $0.089 | 21% |
-| Candy Mapper | $0.096 | 23% |
-| var.parts | $0.078 | 19% |
-| Test Track | $0.064 | 15% |
-| automation-exercise | $0.042 | 10% |
-| Parabank | ~$0.025 | 6% |
-| **Total** | **~$0.394** | **100%** |
-
-**Insight:** MCP is expensive. Heavy-content and e-commerce sites cost more due to form interactions and element iteration.
-
-### By Measurement Confidence
+## Measurement Confidence
 
 | Site | CLI | MCP | Notes |
 |------|-----|-----|-------|
-| testers.ai | ✅ Actual | ✅ Actual | Measured 2026-06-05 |
-| Test Track | ✅ Actual | ✅ Actual | Measured 2026-06-05 |
-| var.parts | ✅ Actual | ✅ Actual | Measured 2026-06-05 |
-| Candy Mapper | ✅ Actual | ✅ Actual | Measured 2026-06-05 |
-| Parabank | ✅ Actual | ⚠️ Estimated | CLI measured; MCP estimated @ 3.0× |
-| automation-exercise | ✅ Verified | ⚠️ Estimated | Load + map measured; MCP estimated @ 3.0× |
+| testers.ai | ✅ Actual × 2 | ✅ Actual × 2 | Both runs 2026-06-06 |
+| testtrack.org | ✅ Actual × 2 | ✅ Actual × 2 | Both runs 2026-06-06 |
+| var.parts | ✅ Actual × 2 | ✅ Actual × 2 | Both runs 2026-06-06 |
+| candymapper.net | ✅ Actual × 2 | ✅ Actual × 2 | Both runs 2026-06-06 |
+| parabank | ✅ Actual × 2 | ✅ Actual × 2 | Both runs 2026-06-06; login intermittent |
+| automation-exercise | ✅ Actual × 2 | ✅ Actual × 2 | Both runs 2026-06-06; MB10 workaround used |
 
----
-
-## Methodology Notes
-
-### Bracket Protocol v2
-
-1. **Snapshot:** Capture baseline state (time, token count)
-2. **Measurement:** Run vibium workflow (CLI or MCP)
-3. **Diff:** Calculate elapsed time and tokens consumed
-
-**Scope per site:**
-- CLI: Navigate → map elements → return
-- MCP: Same workflow via `browser_*` tools
-
-### Timing Variance
-
-**Expected ±50% variance** due to:
-- Network I/O (dominant factor)
-- DNS resolution
-- CDN cache hits/misses
-- Server response time
-- Browser rendering
-
-**Token consumption** is more stable (±2–5%) as it depends on DOM size, not network.
-
-### Assumptions
-
-- All sites tested in same browser session (cached DNS, warm CDN)
-- MCP estimated for Parabank and automation-exercise based on 3.0× ratio
-- No authentication required except Parabank (pre-populated credentials)
-- reCAPTCHA sites pre-stubbed with `eval 'window.grecaptcha={...}'`
-
----
-
-## Recommendations
-
-### For Benchmarking
-
-**Use creator sites as baseline:**
-- **Fastest:** Test Track (2.1× ratio, 2.25s)
-- **Slowest:** Parabank (3.0× ratio, 10.66s)
-- **Balanced:** automation-exercise (3.0× ratio, 1.85s)
-
-**For LLM-driven automation:**
-- Expect 3.0–3.8× overhead with MCP
-- CLI is almost always cheaper ($0.000–$0.025)
-- Large sites (117 elements) = higher MCP cost ($0.089)
-
-### For Testing Practice
-
-**Skill progression:**
-1. Start with **Test Track** (simplest, 2.1× ratio)
-2. Move to **var.parts** (e-commerce, 3.8× ratio)
-3. Try **automation-exercise** (real sandbox, 3.0× ratio)
-4. Challenge **testers.ai** (heavy content, 4.7× ratio)
-5. Master **Parabank** (complex workflow, 3.0× ratio)
-
-### For Future Measurements
-
-**Deeper benchmarks to capture:**
-- Multi-step workflows (e-commerce: browse → cart → checkout)
-- Form submission complexity
-- Dynamic state changes (cart updates, validation messages)
-- Error handling workflows
-- Authentication + protected pages
-
----
-
-## Files & Data
-
-- **CSV:** `references/data/creator_sites.csv` (raw measurement data)
-- **Details:** `references/README.md` (per-site analysis)
-- **Plan:** `AUTOMATION_EXERCISE_PLAN.md` (build specifications)
-- **Design:** `references/AUTOMATION_EXERCISE_DESIGN.md` (UI/workflow specs)
-
----
-
-**Measurement Date:** June 5, 2026  
-**Protocol:** Bracket Protocol v2  
-**Vibium Version:** v26.5.31  
-**Model:** Claude Sonnet 4.6  
-**Status:** ✅ Complete — All 6 sites measured, documented, and verified
+**Last updated:** 2026-06-06 · **Vibium:** v26.5.31 · **Protocol:** Bracket v2
