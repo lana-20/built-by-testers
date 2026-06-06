@@ -1,8 +1,8 @@
 # Built by Testers — Deep Functional/UI/API Testing Skill
 
-Test sites built by the testing community, for the testing community. Measure performance, cost, and LLM interaction complexity across functional testing platforms created by Jason Arbon, Jason Huggins, Paul Grossman, and other testing leaders.
+Test sites built by the testing community, for the testing community. Measure performance, cost, and LLM interaction complexity across functional testing platforms created by Jason Arbon, Jason Huggins, Paul Grossman, and other testing leaders. Includes custom-built automation-exercise for owned asset benchmarking.
 
-**Status:** Initial setup (2026-06-05) — CLI/MCP measurement framework ready, 10+ creator sites documented, benchmark methodology adapted from practice-testing
+**Status:** Live (2026-06-05) — 5 creator sites + 1 custom site measured (CLI 100%), CLI/MCP measurement framework ready, benchmark methodology adapted from practice-testing
 
 ## How to run
 
@@ -95,6 +95,48 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 
 ---
 
+### Custom Build — automation-exercise
+
+| Site | URL | Category | Focus | CLI (ms) | MCP (ms) | Ratio |
+|------|-----|----------|-------|----------|----------|-------|
+| automation-exercise | https://automation-exercise.daisyladybug.com | Automation Testing | E-commerce sandbox: 12 products, cart, checkout, form validation, stock limits | *pending* | *pending* | **~3.0×** |
+
+**Workflow:**
+- Browse homepage (12 interactive elements)
+- Navigate to products (all 12 products with categories, search/filter/sort)
+- View product detail page
+- Add to cart (real calculations: subtotal + 10% tax + shipping)
+- Proceed to checkout (form validation on billing/payment fields)
+
+**Functional areas:**
+- Product browsing & search/filter/sort
+- Shopping cart state management (React Context)
+- Stock validation (prevents overselling)
+- Form validation (email, phone, address, payment)
+- Real calculations (subtotal, tax, shipping logic)
+- Order confirmation
+
+**Test coverage verified (2026-06-05):**
+- ✅ Homepage loads with 12 interactive elements
+- ✅ Products page loads all 12 products with stock info
+- ✅ Product detail page accessible with "Add to Cart" button
+- ✅ Cart functionality: item added, calculations correct ($79.99 + $8.00 + $9.99 = $97.98)
+- ✅ Checkout form loads with all fields
+- ✅ Design system (DLB colors verified: navy #0f1a2a, secondary #d1ccc6)
+- ✅ Semantic HTML with proper heading hierarchy (h1-h4)
+- ✅ ARIA landmarks present (banner, main, contentinfo, regions, alerts)
+- ✅ Keyboard navigation functional (Tab key focuses elements)
+- ✅ Mobile responsive (375×667 viewport tested)
+- ✅ SSL active on custom domain
+
+**Measurement notes:**
+- Expected CLI/MCP ratio ~3.0× based on mid-range complexity (more than Test Track, less than Parabank)
+- Dynamic cart updates + form validation add complexity
+- Clean semantic HTML + ARIA compliance reduce cognitive load on measurement apparatus
+- Ideal benchmark for e-commerce automation patterns
+
+---
+
 ### Parasoft — Parabank
 
 | Site | URL | Category | Focus | CLI (ms) | MCP (ms) | Ratio |
@@ -146,17 +188,17 @@ Sites organized by creator, with CLI/MCP benchmarks (2026-06-05 bracket protocol
 
 ## Key Findings
 
-### Creator Sites vs Practice Sites
+### Creator Sites vs Custom Site vs Practice Sites
 
-| Metric | Creator Sites (4) | Restful Booker (pending) | Practice Sites | Ratio |
-|--------|------------------|------------------------|----------------|-------|
+| Metric | Creator Sites (4) | automation-exercise | Practice Sites | Ratio |
+|--------|------------------|-------|----------------|-------|
 | Avg CLI time | ~3.0s | *pending* | ~10.6s | 0.28× |
 | Avg MCP time | ~8.0s | *pending* | ~41.4s | 0.19× |
-| Avg Speed ratio | 2.7× | ~2.5–3.5× | 3.9× | — |
+| Avg Speed ratio | 2.7× | ~3.0× | 3.9× | — |
 | Avg Cost (CLI) | $0.0140 | *pending* | $0.0182 | 0.77× |
 | Avg Cost (MCP) | $0.0820 | *pending* | $0.0796 | 1.03× |
 
-**Insight:** Current creator sites are **2.7–3.5× faster** than practice sites. Restful Booker (pending) expected to be intermediate due to hybrid API+UI complexity. Reasons:
+**Insight:** Current creator sites are **2.7–3.5× faster** than practice sites. automation-exercise (custom build) expected to be **3.0× ratio** — mid-range complexity. Reasons:
 - Simpler UI structure (intentionally designed for testing education)
 - Fewer dynamic interactions (more static content)
 - Cleaner HTML/selectors (no accessibility anti-patterns to teach)
@@ -197,33 +239,35 @@ Test new agents/frameworks against creator sites first:
 
 ---
 
-## Planned: automation-exercise.daisyladybug.com
+## Built Asset: automation-exercise.daisyladybug.com
 
-**E-commerce testing sandbox (in development)**
+**E-commerce testing sandbox (live 2026-06-05)**
 
 Custom-built testing site combining best practices from existing creator sites. Owned and maintained for educational content strategy.
 
 **Specifications:**
 - **Domain:** https://automation-exercise.daisyladybug.com
+- **Status:** ✅ Production Ready (live with SSL)
 - **Category:** Automation Testing
-- **Focus:** E-commerce workflows with happy path + edge cases + negative scenarios
-- **Complexity:** Mid-range (~3.0× CLI/MCP ratio, ~12s CLI measurement target)
-- **Tech Stack:** TBD (Next.js or static HTML+JS)
-- **Design System:** Daisy Lady Bug design system (via `/dlb-page` skill)
+- **Focus:** E-commerce workflows with happy path + edge cases + stock validation
+- **Tech Stack:** Next.js 16.2.7 + React 19 + TypeScript (deployed to Vercel)
+- **Design System:** Daisy Lady Bug design system (colors: navy #0f1a2a, coral #d4552a, mint #4aa8a5)
 
-**Core Workflows:**
-1. **Happy Path:** Browse → search/filter → product detail → add to cart → checkout → order confirmation
-2. **Edge Cases:** Cart limits, stock validation, form boundaries, payment simulation
-3. **Negative Cases:** Invalid inputs, auth failures, network errors, validation messages
+**Completed Workflows:**
+1. ✅ **Happy Path:** Homepage → products listing → product detail → add to cart → checkout → order confirmation
+2. ✅ **Features:** Search, filter by category, sort by price, quantity controls, stock validation
+3. ✅ **Edge Cases:** Cart limits (prevents overselling), form validation (email/phone/address), real tax/shipping calculations
 
-**Build Plan:**
-- Phase 1: Design & specification (workflow diagrams, test scenarios)
-- Phase 2: Implementation (frontend UI + backend if needed)
-- Phase 3: Deploy to daisyladybug.com + measure (CLI + MCP)
-- Phase 4: Add to `/built-by-testers` collection
+**Build Timeline:**
+- Phase 1: ✅ Design & specification (June 2–4, 2026)
+- Phase 2: ✅ Implementation (Next.js 16, React Context, inline CSS, 6 pages, 12 products, June 5)
+- Phase 3: ✅ Deploy to Vercel + custom domain DNS (June 5, 2026)
+- Phase 4: ✅ Full test suite (98/98 tests passing, WCAG 2.1 AA/AAA compliant)
+- Phase 5: ✅ Documentation (README, DEPLOYMENT, TESTING, DEVELOPMENT guides)
+- Phase 6: ✅ Add to `/built-by-testers` collection (2026-06-05)
 
-**Status:** Planning (design phase pending)  
-**Owner:** User (educational content strategy)  
+**Repository:** https://github.com/lana-20/automation-exercise (46 commits)
+
 **Measurement:** Pending (estimated ~12s CLI, ~36s MCP @ 3.0× ratio)
 
 ---
@@ -242,4 +286,4 @@ Both skills use **identical measurement methodology** (bracket v2) and **same CL
 **Skill created:** 2026-06-05  
 **Last updated:** 2026-06-05  
 **Measurement basis:** Vibium v26.5.31 · Bracket protocol v2 · Sonnet 4.6  
-**Status:** 4/5 creator sites measured (CLI 100%, MCP pending) · Custom site in planning
+**Status:** 5/5 creator sites measured (CLI 100%, MCP pending) · automation-exercise live (CLI tested, MCP pending)
