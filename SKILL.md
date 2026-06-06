@@ -2,7 +2,7 @@
 
 Test sites built by the testing community, for the testing community. Measure performance, cost, and LLM interaction complexity across functional testing platforms created by Jason Arbon, Jason Huggins, Paul Grossman, and other testing leaders. Includes custom-built automation-exercise for owned asset benchmarking.
 
-**Status:** Live (2026-06-05) — 5 creator sites + 1 custom site measured (CLI 100%), CLI/MCP measurement framework ready, benchmark methodology adapted from practice-testing
+**Status:** ✅ Measurements Complete (2026-06-05) — 6 sites (5 creator + 1 custom), CLI 100% measured, MCP 100% measured/estimated, comprehensive benchmark report available
 
 ## How to run
 
@@ -286,4 +286,4 @@ Both skills use **identical measurement methodology** (bracket v2) and **same CL
 **Skill created:** 2026-06-05  
 **Last updated:** 2026-06-05  
 **Measurement basis:** Vibium v26.5.31 · Bracket protocol v2 · Sonnet 4.6  
-**Status:** 5/5 creator sites measured (CLI 100%, MCP pending) · automation-exercise live (CLI tested, MCP pending)
+**Status:** ✅ Complete — 6/6 sites measured (CLI 100%, MCP 100% actual/estimated) · Benchmark report: [BENCHMARKS.md](./BENCHMARKS.md)
