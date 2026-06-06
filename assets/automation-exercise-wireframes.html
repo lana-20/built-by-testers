@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>automation-exercise Wireframes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1a2a;
+      --bg-dark: #0a1220;
+      --card: #13243a;
+      --off-white: #f5f0eb;
+      --coral: #d4552a;
+      --coral-light: #e8785a;
+      --mint: #4aa8a5;
+      --error: #c53030;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--off-white);
+      font-family: Inter, -apple-system, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    h1 { font-size: 24px; font-weight: 600; }
+
+    .cart-badge {
+      background: var(--coral);
+      color: var(--off-white);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .wireframe {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 30px;
+      margin-bottom: 40px;
+      page-break-inside: avoid;
+    }
+
+    .wireframe h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: var(--coral);
+    }
+
+    .wireframe-content {
+      background: var(--bg-dark);
+      padding: 20px;
+      border-radius: 4px;
+      border: 1px dashed var(--border);
+      min-height: 300px;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .product-card {
+      background: var(--bg);
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    button {
+      background: var(--coral);
+      color: var(--off-white);
+      padding: 10px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 10px;
+      display: inline-block;
+      width: 100%;
+    }
+
+    button:hover { background: var(--coral-light); }
+
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0 16px 0;
+      background: var(--bg);
+      color: var(--off-white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .form-row.full { grid-template-columns: 1fr; }
+
+    .summary {
+      background: var(--bg);
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .summary-total {
+      font-weight: 600;
+      color: var(--coral);
+      border-bottom: none;
+      padding: 16px 0 8px 0;
+      font-size: 16px;
+    }
+
+    .success {
+      background: rgba(74, 168, 165, 0.1);
+      border: 1px solid var(--mint);
+      color: var(--mint);
+      padding: 16px;
+      border-radius: 4px;
+      margin: 20px 0;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .error {
+      background: rgba(197, 48, 48, 0.1);
+      border: 1px solid var(--error);
+      color: var(--error);
+      padding: 8px;
+      border-radius: 4px;
+      margin: 8px 0;
+      font-size: 12px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .nav-links button { flex: 1; }
+
+    .nav-links button:last-child { background: #555; }
+    .nav-links button:last-child:hover { background: #777; }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    footer {
+      margin-top: 40px;
+      padding: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      color: rgba(245, 240, 235, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>automation-exercise Wireframes</h1>
+    <div class="cart-badge">Cart: 0</div>
+  </header>
+
+  <!-- Homepage -->
+  <div class="wireframe">
+    <h2>/ — Homepage</h2>
+    <div class="wireframe-content">
+┌─────────────────────────────────────────┐
+│  automation-exercise          [Cart: 0] │
+├─────────────────────────────────────────┤
+│                                         │
+│  Welcome to automation-exercise         │
+│  Test e-commerce workflows             │
+│                                         │
+│  Search: [_______________] [Search]    │
+│  Category: [All ▼]  Sort: [Popular ▼]  │
+│                                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  Product 1      Product 2      Product 3│
+│  $49.99         $29.99         $199.99 │
+│  [Add to Cart] [Add to Cart]  [Add Cart]│
+│                                         │
+│  Product 4      Product 5      Product 6│
+│  $15.99         $89.99         $59.99  │
+│  [Add to Cart] [Add to Cart]  [Add Cart]│
+│                                         │
+└─────────────────────────────────────────┘
+    </div>
+
+    <strong>Components:</strong>
+    <div style="margin-top: 15px;">
+      <input type="text" placeholder="Search products..." />
+      <div class="form-row">
+        <select><option>All Categories</option><option>Electronics</option></select>
+        <select><option>Popular</option><option>Price Low to High</option></select>
+      </div>
+
+      <h3 style="margin: 20px 0 10px 0; color: var(--coral);">Product Grid</h3>
+      <div class="grid">
+        <div class="product-card">
+          <div style="height: 100px; background: var(--border); border-radius: 4px; margin-bottom: 10px;">IMAGE</div>
+          <strong>Wireless Headphones</strong>
+          <div style="color: var(--coral); margin: 8px 0;">$79.99</div>
+          <button>Add to Cart</button>
+        </div>
+        <div class="product-card">
+          <div style="height: 100px; background: var(--border); border-radius: 4px; margin-bottom: 10px;">IMAGE</div>
+          <strong>Cotton T-Shirt</strong>
+          <div style="color: var(--coral); margin: 8px 0;">$24.99</div>
+          <button>Add to Cart</button>
+        </div>
+        <div class="product-card">
+          <div style="height: 100px; background: var(--border); border-radius: 4px; margin-bottom: 10px;">IMAGE</div>
+          <strong>Desk Lamp</strong>
+          <div style="color: var(--coral); margin: 8px 0;">$39.99</div>
+          <button>Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Detail -->
+  <div class="wireframe">
+    <h2>/products/:id — Product Detail</h2>
+    <div class="wireframe-content">
+┌─────────────────────────────────────────┐
+│  automation-exercise          [Cart: 1] │
+│  [← Back to Products]                   │
+├─────────────────────────────────────────┤
+│  [Image]              Wireless Headphones│
+│  (Large)              Category: Electro │
+│                       Stock: [In Stock] │
+│                       Price: $79.99     │
+│                       Rating: ★★★★☆    │
+│                       Qty: [1] ▲▼      │
+│                       [Add to Cart]    │
+│                                         │
+│  Premium quality headphones with...     │
+│                                         │
+│  Specs:                                 │
+│  • Weight: 0.5 lbs                      │
+│  • Colors: Black, Silver, Gold          │
+│  • Warranty: 1 year                     │
+│                                         │
+└─────────────────────────────────────────┘
+    </div>
+
+    <strong>Components:</strong>
+    <div style="margin-top: 15px;">
+      <input type="text" placeholder="Product Name" value="Wireless Headphones" disabled />
+      <input type="text" placeholder="Description" disabled />
+
+      <label>Quantity:</label>
+      <div style="display: flex; gap: 10px;">
+        <input type="number" value="1" min="1" max="99" style="flex: 0 0 80px;" />
+        <button style="flex: 1;">Add to Cart</button>
+      </div>
+
+      <select style="margin-top: 15px;">
+        <option>Select Color</option>
+        <option>Black</option>
+        <option>Silver</option>
+        <option>Gold</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Shopping Cart -->
+  <div class="wireframe">
+    <h2>/cart — Shopping Cart</h2>
+    <div class="wireframe-content">
+┌─────────────────────────────────────────┐
+│  automation-exercise          [Cart: 3] │
+├─────────────────────────────────────────┤
+│  Shopping Cart                          │
+│                                         │
+│  Product Name      Qty  Price  Remove  │
+│  ─────────────────────────────────────  │
+│  Wireless Headphones 1  $79.99 [×]    │
+│  Cotton T-Shirt      2  $24.99 [×]    │
+│  Desk Lamp           1  $39.99 [×]    │
+│                                         │
+│  Subtotal:              $169.96        │
+│  Tax (8%):              $13.60         │
+│  Shipping:              $10.00         │
+│  ─────────────────────────────────────  │
+│  Total:                 $193.56        │
+│                                         │
+│      [Continue]  [Checkout]            │
+│                                         │
+└─────────────────────────────────────────┘
+    </div>
+
+    <strong>Components:</strong>
+    <div style="margin-top: 15px;">
+      <div style="background: var(--bg); padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 0.5fr; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 600;">
+          <div>Product</div>
+          <div>Qty</div>
+          <div>Price</div>
+          <div></div>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 0.5fr; gap: 10px; padding: 10px 0; align-items: center;">
+          <div>Wireless Headphones</div>
+          <input type="number" value="1" min="1" style="width: 60px;" />
+          <div>$79.99</div>
+          <button style="background: var(--error); width: 100%; margin: 0; padding: 4px; font-size: 12px;">×</button>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="summary-row">
+          <span>Subtotal:</span>
+          <span>$169.96</span>
+        </div>
+        <div class="summary-row">
+          <span>Tax (8%):</span>
+          <span>$13.60</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping:</span>
+          <span>$10.00</span>
+        </div>
+        <div class="summary-row summary-total">
+          <span>Total:</span>
+          <span>$193.56</span>
+        </div>
+      </div>
+
+      <label>Promo Code:</label>
+      <div style="display: grid; grid-template-columns: 1fr 120px; gap: 10px;">
+        <input type="text" placeholder="Enter code" />
+        <button style="margin: 0;">Apply</button>
+      </div>
+
+      <div class="nav-links">
+        <button>← Continue Shopping</button>
+        <button>Proceed to Checkout →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Form -->
+  <div class="wireframe">
+    <h2>/checkout — Checkout Form</h2>
+    <div class="wireframe-content">
+┌─────────────────────────────────────────┐
+│  automation-exercise          [Cart: 3] │
+│  Checkout (Step 1 of 2)                 │
+├─────────────────────────────────────────┤
+│                                         │
+│  Shipping Information                   │
+│  First Name: [__________________]       │
+│  Last Name:  [__________________]       │
+│  Email:      [__________________]       │
+│  Phone:      [__________________]       │
+│  Address:    [__________________]       │
+│  City:       [__________________]       │
+│  State:      [CA ▼]  Zip: [_______]   │
+│                                         │
+│  Shipping Method:                      │
+│  ◉ Standard (5-7 days) - FREE          │
+│  ○ Express (2-3 days) - $15.00         │
+│  ○ Overnight - $25.00                  │
+│                                         │
+│  Payment Method:                       │
+│  ◉ Credit Card    ○ PayPal             │
+│                                         │
+│  Card Number: [________________]       │
+│  Exp Date: [__]  CVV: [___]            │
+│                                         │
+│              [Continue]  [Cancel]      │
+│                                         │
+└─────────────────────────────────────────┘
+    </div>
+
+    <strong>Components:</strong>
+    <div style="margin-top: 15px;">
+      <h3 style="color: var(--coral); margin-bottom: 10px;">Shipping Information</h3>
+      <div class="form-row">
+        <input type="text" placeholder="First Name" maxlength="50" />
+        <input type="text" placeholder="Last Name" maxlength="50" />
+      </div>
+      <input type="email" placeholder="Email" />
+      <input type="tel" placeholder="Phone (###-###-####)" />
+      <input type="text" placeholder="Address" maxlength="100" />
+      <div class="form-row">
+        <input type="text" placeholder="City" maxlength="50" />
+        <select><option>CA</option><option>NY</option></select>
+      </div>
+      <input type="text" placeholder="Zip (5 digits)" maxlength="10" />
+
+      <h3 style="color: var(--coral); margin: 20px 0 10px 0;">Shipping Method</h3>
+      <div style="margin: 10px 0;">
+        <label style="display: flex; gap: 10px;"><input type="radio" name="shipping" checked /> Standard - FREE</label>
+        <label style="display: flex; gap: 10px;"><input type="radio" name="shipping" /> Express (+$15)</label>
+        <label style="display: flex; gap: 10px;"><input type="radio" name="shipping" /> Overnight (+$25)</label>
+      </div>
+
+      <h3 style="color: var(--coral); margin: 20px 0 10px 0;">Payment Method</h3>
+      <div style="margin: 10px 0;">
+        <label style="display: flex; gap: 10px;"><input type="radio" name="payment" checked /> Credit Card</label>
+        <label style="display: flex; gap: 10px;"><input type="radio" name="payment" /> PayPal</label>
+      </div>
+
+      <div class="form-row" style="margin-top: 15px;">
+        <input type="text" placeholder="Card Number" maxlength="16" />
+        <input type="text" placeholder="Exp (MM/YY)" maxlength="5" />
+      </div>
+      <input type="text" placeholder="CVV (3-4 digits)" maxlength="4" />
+
+      <div class="nav-links">
+        <button>Continue →</button>
+        <button>Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Confirmation -->
+  <div class="wireframe">
+    <h2>/order-confirmation — Order Confirmation</h2>
+    <div class="wireframe-content">
+┌─────────────────────────────────────────┐
+│  automation-exercise          [Cart: 0] │
+├─────────────────────────────────────────┤
+│                                         │
+│  ✓ Order Confirmed!                    │
+│                                         │
+│  Order Number: ORD-2024-001234          │
+│  Expected Delivery: June 10, 2024       │
+│                                         │
+│  Order Summary:                         │
+│  Wireless Headphones ×1  $79.99        │
+│  Cotton T-Shirt      ×2  $24.99        │
+│  Desk Lamp           ×1  $39.99        │
+│                                         │
+│  Subtotal:              $169.96        │
+│  Tax (8%):              $13.60         │
+│  Shipping:              $10.00         │
+│  ─────────────────────────────────────  │
+│  Total:                 $193.56        │
+│                                         │
+│  Shipping To:                          │
+│  John Doe                              │
+│  123 Main St                           │
+│  San Francisco, CA 94105               │
+│                                         │
+│  Confirmation: john@example.com        │
+│                                         │
+│  [ Continue Shopping ]                 │
+│                                         │
+└─────────────────────────────────────────┘
+    </div>
+
+    <strong>Components:</strong>
+    <div style="margin-top: 15px;">
+      <div class="success">
+        ✓ Order Confirmed! Your order has been placed.
+      </div>
+
+      <div style="background: var(--bg); padding: 15px; border-radius: 4px; margin: 20px 0;">
+        <strong>Order #:</strong> ORD-2024-001234<br>
+        <strong>Expected Delivery:</strong> June 10, 2024
+      </div>
+
+      <h3 style="color: var(--coral); margin-bottom: 10px;">Order Summary</h3>
+      <div class="summary">
+        <div class="summary-row">
+          <span>Wireless Headphones (×1)</span>
+          <span>$79.99</span>
+        </div>
+        <div class="summary-row">
+          <span>Cotton T-Shirt (×2)</span>
+          <span>$49.98</span>
+        </div>
+        <div class="summary-row">
+          <span>Desk Lamp (×1)</span>
+          <span>$39.99</span>
+        </div>
+        <div class="summary-row">
+          <span>Subtotal:</span>
+          <span>$169.96</span>
+        </div>
+        <div class="summary-row">
+          <span>Tax (8%):</span>
+          <span>$13.60</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping:</span>
+          <span>$10.00</span>
+        </div>
+        <div class="summary-row summary-total">
+          <span>Total:</span>
+          <span>$193.56</span>
+        </div>
+      </div>
+
+      <div style="background: var(--bg); padding: 15px; border-radius: 4px; margin: 20px 0;">
+        <strong>Shipping To:</strong><br>
+        John Doe<br>
+        123 Main St<br>
+        San Francisco, CA 94105<br>
+        <br>
+        <strong>Confirmation Email:</strong> john@example.com
+      </div>
+
+      <button style="width: 100%;">← Continue Shopping</button>
+    </div>
+  </div>
+
+  <footer>
+    <strong>Design Specification: automation-exercise.daisyladybug.com</strong><br>
+    E-commerce testing sandbox for automation testing education and benchmarking.<br>
+    <br>
+    All pages built with DLB design system. All forms include validation.<br>
+    Test data includes 12 products across 5 categories with edge cases (out of stock, high price, etc.).
+  </footer>
+</div>
+
+</body>
+</html>
